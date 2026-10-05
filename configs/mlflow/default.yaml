@@ -1,0 +1,7 @@
+enabled: true
+tracking_uri: sqlite:///mlflow.db
+experiment_name: decovae-fm
+run_name: null
+log_model: true
+log_params: true
+tags: {}

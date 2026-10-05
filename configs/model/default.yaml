@@ -1,0 +1,13 @@
+d_model: 64
+patch_size: 16
+stride: 16
+n_heads: 4
+enc_layers: 2
+dec_layers: 2
+k_top: 16
+rope_theta: 10000.0
+kernels: [5, 9, 13, 25]
+learning_rate: 1.0e-4
+kl_weight: 0.01
+recon_weight: 1.0
+forecast_weight: 1.0

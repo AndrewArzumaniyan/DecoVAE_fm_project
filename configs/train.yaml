@@ -1,0 +1,13 @@
+defaults:
+  - data: default
+  - model: default
+  - trainer: default
+  - mlflow: default
+  - experiment: null
+  - _self_
+
+hydra:
+  run:
+    dir: outputs/train/${now:%Y-%m-%d_%H-%M-%S}
+  job:
+    chdir: false

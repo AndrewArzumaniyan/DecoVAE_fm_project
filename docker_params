@@ -1,0 +1,5 @@
+SRC=$(basename $(pwd))
+CONTAINER_NAME=$USER-$SRC
+DOCKER_NAME=docker
+DOCKER_USER_ID=$(id -u)
+DOCKER_GROUP_ID=$(id -g)

@@ -1,0 +1,17 @@
+# @package _global_
+data:
+  batch_size: 1024
+  num_workers: 8
+  window_stride: 96
+  stream_from_disk: false
+  datasets: Electricity,London_Smart_Meters,Pedestrian_Counts,Solar,mexico_city_bikes
+model:
+  d_model: 128
+  enc_layers: 4
+  k_top: 8
+  learning_rate: 0.0003
+  kl_weight: 0.01
+trainer:
+  epochs: 50
+  accelerator: gpu
+  devices: [0]

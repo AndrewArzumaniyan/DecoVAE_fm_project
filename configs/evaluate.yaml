@@ -1,0 +1,18 @@
+defaults:
+  - data: default
+  - model: default
+  - trainer: default
+  - mlflow: default
+  - _self_
+
+eval:
+  checkpoint: ???
+  num_samples: 100
+  split: test
+  output_json: null
+
+hydra:
+  run:
+    dir: outputs/eval/${now:%Y-%m-%d_%H-%M-%S}
+  job:
+    chdir: false

@@ -1,0 +1,11 @@
+data_dir: ./data
+context_len: 512
+pred_len: 96
+batch_size: 32
+datasets: null
+load_fraction: 1.0
+load_seed: 42
+window_stride: 96
+stream_from_disk: false
+debug_on_dummy: false
+num_workers: 0

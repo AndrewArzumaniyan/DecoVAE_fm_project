@@ -1,0 +1,8 @@
+# @package _global_
+data:
+  debug_on_dummy: true
+  batch_size: 32
+trainer:
+  epochs: 1
+  devices: 1
+  accelerator: cpu

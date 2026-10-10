@@ -141,6 +141,44 @@ Models trained only on `synthetic_v2`, evaluated on fixed test windows of the pr
 
 With this few windows these numbers describe tendencies, not established differences.
 
+## 8. Isolating FFT reconstruction alone does not restore decomposition
+
+The [FFT-only ablation](fft_reconstruction/README.md) trains the native model with three final
+reconstruction operations: original, amplitude rescaling only, and amplitude correction plus
+evaluation at the original frequencies k/T without rounding. The original learned MA, encoders,
+all heads, parameter count and `benchmark.runner.loss` are unchanged. Initial weights and batch
+orders match within each seed/horizon pair; there is no period estimator or fixed seasonal baseline.
+
+27 runs: horizons 96/128/256 × seeds 0/1/2 × three variants, 30 epochs each; 2048 training and 256
+validation series from the 45 base scenarios. Test includes 512 base series and 12 held-out
+diagnostic cases × 32 series. Each horizon is trained separately, using prefixes of shared paths.
+This local series uses Python 3.13.5 / torch 2.8.0 on CPU, unlike the earlier locked benchmark.
+
+| horizon | original normalized CRPS | amplitude only | exact k/T |
+|---|---|---|---|
+| 96 | 0.31994 | 0.32186 | 0.32784 |
+| 128 | 0.33286 | 0.33490 | 0.34044 |
+| 256 | 0.36098 | 0.36173 | 0.38142 |
+
+The identity check confirms amplitude and rounded-frequency errors. Nevertheless, neither change
+improves mean base-test CRPS at any horizon. Exact k/T is worse in all three seeds at every horizon;
+amplitude-only improves two seeds at H256 but worsens the third enough to offset the gain.
+No horizon has a paired CRPS interval entirely below zero in at least two of three seeds.
+
+Decoded seasonal projection gains remain 0.022–0.144 (an exact match would be 1). For periods
+64/128/256, the true seasonal energy retained in the encoder's top-K bins averages 0.23% / near
+zero / near zero, while the decoded trend carries the seasonal signal (projection gains near 1).
+The decoder cannot recover frequencies absent from the seasonal representation.
+
+At a fixed horizon the amplitude factor can be absorbed by the learned final complex-linear head;
+this is verified on a trained checkpoint to 2.38e-7 maximum output error. Exact k/T also forces a
+T-periodic seasonal: s(t+512)=s(t), whereas the base periods 12/24/48/96 do not divide512. Eliminating
+rounded transfer therefore does not eliminate the off-grid extrapolation limitation.
+
+Per-seed scores, paired intervals and diagnostics: `results/fft_reconstruction_*.csv`.
+[Executed notebook](fft_reconstruction_summary.ipynb); [detailed report](fft_reconstruction/FINDINGS.md).
+These results concern this synthetic training profile, not real-data accuracy or unseen-horizon transfer.
+
 ## Limitations
 
 - Synthetic data mostly follow the additive trend + seasonal + Gaussian noise form the model

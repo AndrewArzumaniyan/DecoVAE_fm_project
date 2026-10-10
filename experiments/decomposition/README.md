@@ -15,9 +15,11 @@ TSFMs). It prepares that comparison. Key results are summarised in [FINDINGS.md]
 | `period_decomp/` | per-window period estimation and period-aware decomposition (HP trend + Fourier seasonal at non-integer periods); synthetic benchmark; period detection on the pretraining corpus |
 | `checks/` | numerical checks of the original decomposition and seasonal decoder without training; reproduction of `notebooks/debug_training.ipynb` against the known true distribution |
 | `pinn/` | structural constraints (input representation, hard periodic decoder, smoothness and teacher penalties) on synthetic data |
+| `fft_reconstruction/` | isolated original / amplitude-only / exact-frequency reconstruction ablation: native model and benchmark loss, 3 horizons × 3 seeds |
 | `benchmark/` | model variants, synthetic and real data, training, evaluation, diagnostics, interventions, H1 data |
 | `results/` | small summary tables used in FINDINGS.md |
 | `summary.ipynb` | figures for FINDINGS.md, built from `results/` (saved with outputs, so it renders on GitHub) |
+| `fft_reconstruction_summary.ipynb` | executed figures and paired comparisons for the FFT-only training ablation |
 | `paths.py` | locations of data and run outputs |
 
 ## Setup
@@ -46,7 +48,8 @@ variance are stored next to every series and are used only in metrics.
   10 % amplitude drift) and a diagnostic suite of 29 one-mechanism-at-a-time cases.
 - `benchmark/h1_data.py`: noise with a known volatility state (GARCH, stochastic volatility,
   Markov regimes, homoskedastic and level-dependent controls) for testing H1.
-- Context T = 512, horizon L = 96 throughout.
+- Context T = 512, horizon L = 96 in the existing benchmark; the isolated `fft_reconstruction/`
+  ablation also tests horizons 128 and 256 using shared paths.
 
 **Real data** is the pretraining corpus produced by `convert_data.sh` (`decovaefm/data/unified_converter.py`).
 Point `DECOVAE_VER0` to the folder with `manifest.json` (default: `<repo>/data`). The corpus has
@@ -85,6 +88,12 @@ deterministic. Training on a GPU is not bit-exact across runs (CUDA kernels), so
 reproduce the reported metrics up to small run-to-run differences.
 
 ## Running
+
+The FFT-only ablation has its own [protocol and commands](fft_reconstruction/README.md).
+Run `python experiments/decomposition/fft_reconstruction/train.py --profile full` from the repository
+root, then `python experiments/decomposition/fft_reconstruction/report.py` to build the CSV summaries
+and executed notebook. It imports the current model and the unchanged benchmark loss; the source
+snapshot records the actual local environment, which differs from `uv.lock` for the published FFT grid.
 
 Fast, CPU, no training:
 

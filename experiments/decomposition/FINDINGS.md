@@ -2,7 +2,7 @@
 
 Mechanism-level results for the `decovaefm` architecture. Unless stated otherwise: synthetic data
 with known components, context T = 512, horizon L = 96, three training seeds reported separately,
-paired row-bootstrap intervals (2,000 resamples) within a seed. Tables are in [results/](results/);
+paired row-bootstrap intervals (2,000 resamples) within a seed. Tables are in [results/](results/), figures in [summary.ipynb](summary.ipynb);
 how to reproduce them is in [README.md](README.md). Arms A/B/C/D/Cf/Df are defined in the README.
 
 These results do not include the decisive comparison of the project plan (DecoVAE-FM against

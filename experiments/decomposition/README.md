@@ -17,6 +17,7 @@ TSFMs). It prepares that comparison. Key results are summarised in [FINDINGS.md]
 | `pinn/` | structural constraints (input representation, hard periodic decoder, smoothness and teacher penalties) on synthetic data |
 | `benchmark/` | model variants, synthetic and real data, training, evaluation, diagnostics, interventions, H1 data |
 | `results/` | small summary tables used in FINDINGS.md |
+| `summary.ipynb` | figures for FINDINGS.md, built from `results/` (saved with outputs, so it renders on GitHub) |
 | `paths.py` | locations of data and run outputs |
 
 ## Setup
@@ -117,6 +118,9 @@ python evaluate_diagnostics.py v2_A_s0                    # 29-case diagnostic s
 python interventions.py v2_A_s0 v2_Cf_s0 --out interventions_v2
 python real_transfer_eval.py v2_A_s0 v2_Cf_s0 --windows-run v2_A_s0 --out real_transfer_v2
 ```
+
+To re-run the figures: `uv run --with jupyterlab jupyter lab experiments/decomposition/summary.ipynb`
+(it reads only `results/`; figure 3 recomputes one example in a few seconds).
 
 `pinn/run_all.sh` runs the structural-constraint grid (8 variants × 3 seeds);
 `checks/notebook_repro.py <kl_weight> <out_prefix>` reproduces the debug notebook.

@@ -1,0 +1,16 @@
+seed,noise_level,effect,mean,ci95_low,ci95_high,n
+0,all,G_original,-0.0019,-0.0026,-0.0011,2048
+1,all,G_original,-0.0016,-0.0023,-0.0010,2048
+2,all,G_original,0.0001,-0.0005,0.0006,2048
+0,all,G_period,0.0030,0.0025,0.0036,2048
+1,all,G_period,-0.0010,-0.0016,-0.0005,2048
+2,all,G_period,0.0147,0.0137,0.0156,2048
+0,all,variance_error_C_minus_A,0.0108,0.0090,0.0126,2048
+1,all,variance_error_C_minus_A,-0.0060,-0.0078,-0.0043,2048
+2,all,variance_error_C_minus_A,-0.0100,-0.0117,-0.0083,2048
+0,all,interaction,0.0049,0.0038,0.0059,2048
+1,all,interaction,0.0006,-0.0003,0.0015,2048
+2,all,interaction,0.0146,0.0136,0.0157,2048
+0,all,input_residual_error_C_minus_A,-0.1867,-0.1925,-0.1813,2048
+1,all,input_residual_error_C_minus_A,-0.1869,-0.1927,-0.1814,2048
+2,all,input_residual_error_C_minus_A,-0.1867,-0.1924,-0.1812,2048

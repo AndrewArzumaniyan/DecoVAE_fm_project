@@ -1,0 +1,10 @@
+criterion,case,value,passed
+K1,period_37_1,1.0030,True
+K1,dual_17_3_96_ratio_1,1.0010,True
+K1,dual_17_3_96_ratio_3,1.0023,True
+K2,period_37_1,3.0000,True
+K2,dual_17_3_96_ratio_1,3.0000,True
+K2,dual_17_3_96_ratio_3,3.0000,True
+K2,v2 seasonal block,1.0000,False
+K2 no-harm,amplitude_growth;combined_amplitude_smooth_sigma;combined_dual_ar05;dual_24_168_ratio_1;dual_24_168_ratio_3,5.0000,False
+K3,v2 seasonal block CRPS,0.2103,False

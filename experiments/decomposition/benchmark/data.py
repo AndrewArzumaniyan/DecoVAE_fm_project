@@ -1,13 +1,14 @@
 """Independent synthetic streams; context-only affine normalization and real windows."""
 import hashlib
 import json
+import os
 from pathlib import Path
 import sys
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from paths import REPO_ROOT as ROOT, PERIOD_DECOMP_DIR, BENCHMARK_DIR, VER0_DIR, RUNS_DIR  # noqa: E402,F401
-T, L = 512, 96
+T, L = int(os.environ.get('DECOVAE_T', 512)), 96   # context length can be overridden for the context-length test
 SCENARIOS = [(t, p, s, mode) for t in ('none','linear','kink') for p in (0,12,24,48,96) for s in (.1,.3,.6) for mode in ('iid',)]
 STRESS = [('linear', p, .3, 'iid') for p in (17.3,30.4,168)] + [('kink',24,.3,m) for m in ('ar05','ar08','dual','amplitude','smooth')]
 

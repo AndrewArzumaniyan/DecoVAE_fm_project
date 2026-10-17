@@ -81,7 +81,7 @@ def test_exact_minibatch_resume(tmp_path,monkeypatch):
     z,m,s=normalize(raw['x']); raw.update(z=z.astype('float32'),mean=m,scale=s,scenario=np.zeros(64,dtype=int),variance=np.ones_like(raw['x']))
     cache=tmp_path/'cache'; cache.mkdir()
     monkeypatch.setattr(runner,'load_splits',lambda args:({'train':raw,'val':raw,'test':raw},cache))
-    monkeypatch.setattr(runner,'evaluate',lambda *args:(pd.DataFrame({'series_id':[0],'crps':[1.]}),[]))
+    monkeypatch.setattr(runner,'evaluate',lambda *args,**kwargs:(pd.DataFrame({'series_id':[0],'crps':[1.]}),[]))
     full=tmp_path/'full'; resumed=tmp_path/'resumed'; full.mkdir(); resumed.mkdir()
     config=dict(device='cpu',seed=0,arm='B',profile='pilot',epochs=1,minutes=10,resume=None,val_limit=None,test_limit=None,real=False,n=0)
     runner.train(Namespace(**config),full)

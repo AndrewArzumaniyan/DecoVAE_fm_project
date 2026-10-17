@@ -20,6 +20,7 @@ from metrics import components,distribution,bootstrap
 
 OUT=RUNS_DIR
 STOP_REQUESTED = False
+RECON_WEIGHT = 1.0  # weight of the context-reconstruction NLL (both NLL terms are means over their own points)
 
 def stop_handler(signum, frame):
     global STOP_REQUESTED
@@ -27,6 +28,12 @@ def stop_handler(signum, frame):
 
 def save_json(path,obj):
     Path(path).write_text(json.dumps(obj,indent=2,default=str))
+
+def active_lock():
+    # uv.lock of the environment this process runs in (uv run sets VIRTUAL_ENV to <project>/.venv); fallback: this project's lock
+    venv=os.environ.get('VIRTUAL_ENV')
+    lock=Path(venv).parent/'uv.lock' if venv else None
+    return lock if lock is not None and lock.exists() else ROOT/'uv.lock'
 
 def provenance(path,args):
     path.mkdir(parents=True,exist_ok=True)
@@ -36,11 +43,11 @@ def provenance(path,args):
         shutil.copyfile(path/'provenance.json',archive/'provenance.json')
         if (path/'source_snapshot').exists(): shutil.copytree(path/'source_snapshot',archive/'source_snapshot')
     hashes={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for directory in (BENCHMARK_DIR,PERIOD_DECOMP_DIR,ROOT/'decovaefm'/'models') for p in directory.glob('*.py')}
-    save_json(path/'provenance.json',dict(config=vars(args),time_utc=datetime.now(timezone.utc).isoformat(),python=os.sys.version,versions={k:importlib.metadata.version(k) for k in ('torch','numpy','scipy','statsmodels','pandas','pyarrow')},gpu=torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,cuda=torch.version.cuda,source_hashes=hashes,data_seed=719,evaluation_seed=1729,training_seed=args.seed,lock_sha256=hashlib.sha256((ROOT/'uv.lock').read_bytes()).hexdigest()))
+    save_json(path/'provenance.json',dict(config=vars(args),time_utc=datetime.now(timezone.utc).isoformat(),python=os.sys.version,versions={k:importlib.metadata.version(k) for k in ('torch','numpy','scipy','statsmodels','pandas','pyarrow')},gpu=torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,cuda=torch.version.cuda,source_hashes=hashes,data_seed=719,evaluation_seed=1729,training_seed=args.seed,lock_sha256=hashlib.sha256(active_lock().read_bytes()).hexdigest(),lock_file=str(active_lock())))
     for name in hashes:
         target=path/'source_snapshot'/name; target.parent.mkdir(parents=True,exist_ok=True)
         shutil.copyfile(ROOT/name,target)
-    shutil.copyfile(ROOT/'uv.lock',path/'uv.lock')
+    shutil.copyfile(active_lock(),path/'uv.lock')
 
 def benchmark(args,path):
     records=[]
@@ -135,21 +142,31 @@ def loss(out,x,y):
         if name+'_mu' not in out: continue
         mu=out[name+'_mu']; lv=out[name+'_logvar'].clamp(-20,10)
         kl+= ((mu.abs()**2+lv.exp()-1-lv).mean()*(1 if mu.is_complex() else .5))
-    return sum(terms)+.01*kl
+    return (sum(terms) if RECON_WEIGHT == 1.0 else RECON_WEIGHT*terms[0]+terms[1])+.01*kl
 
 
 @torch.no_grad()
-def evaluate(model,raw,device,n_samples,limit=None):
+def evaluate(model,raw,device,n_samples,limit=None,vectorized=False):
+    # vectorized=True draws all n_samples in one forward pass of the batch repeated n_samples times: the same
+    # estimator with different random draws (opt-in; the default reproduces the original stream exactly).
     model.eval(); torch.manual_seed(1729); n=len(raw['z']) if limit is None else min(limit,len(raw['z'])); rows=[]; outputs=[]
-    for start in range(0,n,16):
+    step=32 if vectorized else 16
+    for start in range(0,n,step):
         if STOP_REQUESTED: raise InterruptedError('Evaluation stopped for resource recovery')
-        idx=np.arange(start,min(start+16,n)); x=set_batch(model,raw,idx,device)
-        mus=[]; variances=[]; obs=[]; decoded=[]
-        for _ in range(n_samples):
-            o=model(x); mu=o['forecast_mu']; var=o['forecast_logvar'].exp()
-            mus.append(mu.cpu().numpy()); variances.append(var.cpu().numpy()); obs.append((mu+var.sqrt()*torch.randn_like(mu)).cpu().numpy())
-            decoded.append(np.stack([o['decoded_trend'].cpu().numpy(),o['decoded_seasonal'].cpu().numpy()],1))
-        means=np.stack(mus); var=np.stack(variances); samples=np.stack(obs)
+        idx=np.arange(start,min(start+step,n))
+        if vectorized:
+            b=len(idx); x=set_batch(model,raw,np.tile(idx,n_samples),device); o=model(x)
+            mu=o['forecast_mu']; var=o['forecast_logvar'].exp(); ob=mu+var.sqrt()*torch.randn_like(mu)
+            means=mu.reshape(n_samples,b,-1).cpu().numpy(); var=var.reshape(n_samples,b,-1).cpu().numpy(); samples=ob.reshape(n_samples,b,-1).cpu().numpy()
+            dec=torch.stack([o['decoded_trend'],o['decoded_seasonal']],1).reshape(n_samples,b,2,-1).mean(0).cpu().numpy()
+        else:
+            x=set_batch(model,raw,idx,device)
+            mus=[]; variances=[]; obs=[]; decoded=[]
+            for _ in range(n_samples):
+                o=model(x); mu=o['forecast_mu']; var=o['forecast_logvar'].exp()
+                mus.append(mu.cpu().numpy()); variances.append(var.cpu().numpy()); obs.append((mu+var.sqrt()*torch.randn_like(mu)).cpu().numpy())
+                decoded.append(np.stack([o['decoded_trend'].cpu().numpy(),o['decoded_seasonal'].cpu().numpy()],1))
+            means=np.stack(mus); var=np.stack(variances); samples=np.stack(obs); dec=np.mean(decoded,axis=0)
         scale=raw['scale'][idx]; center=raw['mean'][idx]
         means=means*scale+center; samples=samples*scale+center; var=var*scale**2
         true_variance=raw.get('variance',np.zeros_like(raw['x']))[idx,T:] if 'variance' in raw else None
@@ -166,7 +183,7 @@ def evaluate(model,raw,device,n_samples,limit=None):
                 truth=truth+raw['phi'][idx,None]**horizons*raw['noise'][idx,T-1,None]
             metrics['mean_bias_mse']=np.mean((means.mean(0)-truth)**2,axis=-1)
         rows.extend([dict(series_id=int(i),**{k:float(v[j]) for k,v in metrics.items()}) for j,i in enumerate(idx)])
-        outputs.append(dict(indices=idx,samples=samples,mean=means.mean(0),observation_variance=var.mean(0),latent_mean_variance=means.var(0),decoded_normalized=np.mean(decoded,axis=0)))
+        outputs.append(dict(indices=idx,samples=samples,mean=means.mean(0),observation_variance=var.mean(0),latent_mean_variance=means.var(0),decoded_normalized=dec))
     return pd.DataFrame(rows),outputs
 
 
@@ -182,7 +199,9 @@ def train(args,path):
         save_json(path/'status.json',dict(status='stopped_before_training',epochs=0,smoke=False,test_evaluated=False))
         return
     save_json(path/'data_reference.json',dict(cache=str(cache),sha256={p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in cache.glob('*.npz') if '_period_' not in p.name}))
-    model=make_model(args.arm).to(device); optimizer=torch.optim.AdamW(model.parameters(),lr=1e-3)
+    model=make_model(args.arm).to(device); optimizer=torch.optim.AdamW(model.parameters(),lr=getattr(args,'lr',1e-3))
+    # Defaults reproduce the original protocol bit for bit; validation cadence and patience are counted in validations.
+    batch=getattr(args,'batch',32); patience=getattr(args,'patience',10); val_every=getattr(args,'val_every',1)
     rng=np.random.default_rng(args.seed); best=float('inf'); stale=0; first_epoch=0; history=[]; resume_order=None; resume_batch=0; resume_losses=[]
     if args.resume:
         checkpoint=torch.load(args.resume,weights_only=False,map_location=device)
@@ -200,24 +219,27 @@ def train(args,path):
         if device=='cuda': torch.cuda.set_rng_state_all([v.cpu() for v in checkpoint['cuda_rng']])
         best=checkpoint['best']; stale=checkpoint['stale']; history=checkpoint['history']
     epochs=args.epochs or (10 if args.profile=='pilot' else 60); status='complete'
-    for epoch in (range(first_epoch,epochs) if stale<10 else []):
+    for epoch in (range(first_epoch,epochs) if stale<patience else []):
         tick=time.monotonic(); model.train(); order=resume_order if resume_order is not None else rng.permutation(len(raw['train']['z'])); losses=resume_losses if resume_order is not None else []; first_batch=resume_batch if resume_order is not None else 0
         resume_order=None; resume_batch=0; resume_losses=[]
-        for b in range(first_batch,len(order),32):
-            idx=order[b:b+32]; x=set_batch(model,raw['train'],idx,device); y=torch.from_numpy(raw['train']['z'][idx,T:]).to(device)
+        for b in range(first_batch,len(order),batch):
+            idx=order[b:b+batch]; x=set_batch(model,raw['train'],idx,device); y=torch.from_numpy(raw['train']['z'][idx,T:]).to(device)
             optimizer.zero_grad(set_to_none=True); value=loss(model(x),x,y)
             if not torch.isfinite(value): raise RuntimeError('Nonfinite loss')
             value.backward(); torch.nn.utils.clip_grad_norm_(model.parameters(),1.); optimizer.step(); losses.append(value.item())
             if STOP_REQUESTED or time.monotonic()-start>args.minutes*60:
-                checkpoint=dict(model=model.state_dict(),optimizer=optimizer.state_dict(),epoch=epoch,best=best,stale=stale,history=history,torch_rng=torch.get_rng_state(),cuda_rng=torch.cuda.get_rng_state_all() if device=='cuda' else [],numpy_rng=np.random.get_state(),python_rng=random.getstate(),shuffle_rng=rng.bit_generator.state,config=vars(args),status='time_limit',partial_epoch=True,order=order,next_batch=b+32,losses=losses)
+                checkpoint=dict(model=model.state_dict(),optimizer=optimizer.state_dict(),epoch=epoch,best=best,stale=stale,history=history,torch_rng=torch.get_rng_state(),cuda_rng=torch.cuda.get_rng_state_all() if device=='cuda' else [],numpy_rng=np.random.get_state(),python_rng=random.getstate(),shuffle_rng=rng.bit_generator.state,config=vars(args),status='time_limit',partial_epoch=True,order=order,next_batch=b+batch,losses=losses)
                 torch.save(checkpoint,path/'last.pt')
                 save_json(path/'status.json',dict(status='time_limit',epochs=len(history),elapsed_seconds=time.monotonic()-start,smoke=args.epochs is not None and args.epochs<10,partial_epoch=True,test_evaluated=False))
                 print('Time limit: checkpoint and exact minibatch/RNG position saved',flush=True)
                 return
+        if (epoch+1)%val_every and epoch+1<epochs:
+            torch.save(dict(model=model.state_dict(),optimizer=optimizer.state_dict(),epoch=epoch,best=best,stale=stale,history=history,torch_rng=torch.get_rng_state(),cuda_rng=torch.cuda.get_rng_state_all() if device=='cuda' else [],numpy_rng=np.random.get_state(),python_rng=random.getstate(),shuffle_rng=rng.bit_generator.state,config=vars(args),status=status),path/'last.pt')
+            continue
         # Evaluation uses a fixed independent RNG state, without perturbing training.
         state=torch.get_rng_state(); cuda_state=torch.cuda.get_rng_state_all() if device=='cuda' else []
         try:
-            try: metrics,_=evaluate(model,raw['val'],device,32,args.val_limit)
+            try: metrics,_=evaluate(model,raw['val'],device,32,args.val_limit,vectorized=getattr(args,'fast_val',False))
             finally:
                 torch.set_rng_state(state)
                 if device=='cuda': torch.cuda.set_rng_state_all(cuda_state)
@@ -242,7 +264,7 @@ def train(args,path):
         torch.save(checkpoint,path/'last.pt')
         if improved: torch.save(checkpoint,path/'best.pt')
         print(json.dumps(record),flush=True)
-        if status=='time_limit' or stale>=10: break
+        if status=='time_limit' or stale>=patience: break
     model.load_state_dict(torch.load(path/'best.pt',weights_only=False,map_location=device)['model'])
     metrics,outputs=evaluate(model,raw['test'],device,128,args.test_limit)
     metrics['arm']=args.arm; metrics['seed']=args.seed
@@ -267,7 +289,7 @@ def train(args,path):
         for k in ('dataset','series_id','start','split','source'): df[k]=[r[k] for r in records]
         df.to_csv(path/'real_fm_rows.csv',index=False); np.savez_compressed(path/'real_forecast_outputs.npz',outputs=np.array(outputs,dtype=object),data=real['x'])
         save_json(path/'real_windows.json',[{k:v for k,v in r.items() if k!='x'} for r in records])
-    save_json(path/'status.json',dict(status=status,epochs=len(history),elapsed_seconds=time.monotonic()-start,stale=stale,early_stopped=stale>=10,smoke=args.epochs is not None and args.epochs<10,partial_validation=args.val_limit,partial_test=args.test_limit))
+    save_json(path/'status.json',dict(status=status,epochs=len(history),elapsed_seconds=time.monotonic()-start,stale=stale,early_stopped=stale>=patience,smoke=args.epochs is not None and args.epochs<10,partial_validation=args.val_limit,partial_test=args.test_limit))
     report(path)
 
 

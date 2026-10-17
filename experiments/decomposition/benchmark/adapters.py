@@ -51,7 +51,7 @@ class Arm(DecoVAEFM):
         if arm in 'CD': del self.decomposition
         if arm in 'BD':
             del self.noise_encoder
-            self.logvar_decoder=_build_mlp(3*64,64,16,2)
+            self.logvar_decoder=_build_mlp(3*self.d_model,self.d_model,16,2)  # was 3*64,64: broke d_model overrides of the B/D arms (17.10)
             nn.init.zeros_(self.logvar_decoder[-1].bias)
             with torch.no_grad(): self.logvar_decoder[-1].weight.mul_(.01)
     def encode(self,x,n_target=0):

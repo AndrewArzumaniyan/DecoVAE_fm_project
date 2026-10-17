@@ -96,7 +96,7 @@ class FourierArm(Arm):
         super().__init__(name[0])          # self.arm stays 'C'/'D' so every C/D branch still applies
         self.name=name; self.use_correction=True
         del self.seasonal_decoder          # unused: replaced by the Fourier decoder
-        self.fourier_head=_build_mlp(2*64+1,64,2*H_MAX,2)
+        self.fourier_head=_build_mlp(2*self.d_model+1,self.d_model,2*H_MAX,2)
         nn.init.zeros_(self.fourier_head[-1].weight); nn.init.zeros_(self.fourier_head[-1].bias)
         self.fourier=None                  # (periods (B,S), coefs (B,S,2H)), attached per batch
 

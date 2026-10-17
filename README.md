@@ -2,6 +2,15 @@
 
 DecoVAE-FM
 
+## Experiments (this branch)
+
+- **[notebooks/results_overview.ipynb](notebooks/results_overview.ipynb)**: tables and figures of our preliminary
+  report, rebuilt from small result files (renders on GitHub, no data or GPU needed).
+- [experiments/fm_mini/](experiments/fm_mini/README.md): mini foundation-model experiments of the report
+  (period-aware decomposition, latent-mixture loss, synthetic lab), setup and reproduction steps.
+- [experiments/decomposition/](experiments/decomposition/README.md): earlier mechanism-level checks of the
+  decomposition and the noise stream on synthetic data.
+
 ## Docker
 
 Build image:

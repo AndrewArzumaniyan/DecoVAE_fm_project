@@ -1,0 +1,391 @@
+{
+"train/part-00000.parquet": {
+"Electricity": 287,
+"KDD_Cup_2018": 250,
+"London_Smart_Meters": 4463
+},
+"train/part-00001.parquet": {
+"London_Smart_Meters": 519,
+"M4_Daily": 2104,
+"M4_Monthly": 6,
+"M4_Weekly": 41,
+"Pedestrian_Counts": 58,
+"Q-TRAFFIC": 2272
+},
+"train/part-00002.parquet": {
+"Q-TRAFFIC": 5000
+},
+"train/part-00003.parquet": {
+"Q-TRAFFIC": 5000
+},
+"train/part-00004.parquet": {
+"Q-TRAFFIC": 5000
+},
+"train/part-00005.parquet": {
+"Q-TRAFFIC": 5000
+},
+"train/part-00006.parquet": {
+"Q-TRAFFIC": 5000
+},
+"train/part-00007.parquet": {
+"Q-TRAFFIC": 5000
+},
+"train/part-00008.parquet": {
+"Q-TRAFFIC": 5000
+},
+"train/part-00009.parquet": {
+"Q-TRAFFIC": 3337,
+"Solar": 124,
+"Uber_TLC": 16,
+"Wind_Farms": 289,
+"azure_vm_traces_2017": 1234
+},
+"train/part-00010.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00011.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00012.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00013.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00014.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00015.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00016.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00017.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00018.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00019.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00020.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00021.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00022.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00023.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00024.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00025.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00026.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00027.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00028.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00029.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00030.parquet": {
+"azure_vm_traces_2017": 5000
+},
+"train/part-00031.parquet": {
+"azure_vm_traces_2017": 3560,
+"borg_cluster_data_2011": 1440
+},
+"train/part-00032.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00033.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00034.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00035.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00036.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00037.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00038.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00039.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00040.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00041.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00042.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00043.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00044.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00045.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00046.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00047.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00048.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00049.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00050.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00051.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00052.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00053.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00054.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00055.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00056.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00057.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"train/part-00058.parquet": {
+"borg_cluster_data_2011": 4022,
+"largest_2017": 978
+},
+"train/part-00059.parquet": {
+"largest_2017": 5000
+},
+"train/part-00060.parquet": {
+"largest_2017": 1427,
+"mexico_city_bikes": 442,
+"ushcn_daily": 3131
+},
+"train/part-00061.parquet": {
+"ushcn_daily": 2295,
+"weatherbench_weekly": 2705
+},
+"train/part-00062.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00063.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00064.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00065.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00066.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00067.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00068.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00069.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00070.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00071.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00072.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00073.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00074.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00075.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00076.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00077.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00078.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00079.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00080.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00081.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00082.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00083.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00084.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00085.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00086.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00087.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00088.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00089.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00090.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00091.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00092.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00093.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00094.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00095.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00096.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00097.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00098.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00099.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00100.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00101.parquet": {
+"weatherbench_weekly": 5000
+},
+"train/part-00102.parquet": {
+"weatherbench_weekly": 63
+},
+"val/part-00000.parquet": {
+"Electricity": 13,
+"KDD_Cup_2018": 7,
+"London_Smart_Meters": 276,
+"M4_Daily": 108,
+"M4_Weekly": 2,
+"Pedestrian_Counts": 3,
+"Q-TRAFFIC": 2226,
+"Solar": 8,
+"Wind_Farms": 21,
+"azure_vm_traces_2017": 2336
+},
+"val/part-00001.parquet": {
+"azure_vm_traces_2017": 3915,
+"borg_cluster_data_2011": 1085
+},
+"val/part-00002.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"val/part-00003.parquet": {
+"borg_cluster_data_2011": 1366,
+"largest_2017": 393,
+"mexico_city_bikes": 15,
+"ushcn_daily": 304,
+"weatherbench_weekly": 2922
+},
+"val/part-00004.parquet": {
+"weatherbench_weekly": 5000
+},
+"val/part-00005.parquet": {
+"weatherbench_weekly": 3352
+},
+"test/part-00000.parquet": {
+"Electricity": 21,
+"KDD_Cup_2018": 13,
+"London_Smart_Meters": 297,
+"M4_Daily": 111,
+"Pedestrian_Counts": 2,
+"Q-TRAFFIC": 2313,
+"Solar": 5,
+"Uber_TLC": 1,
+"Wind_Farms": 18,
+"azure_vm_traces_2017": 2219
+},
+"test/part-00001.parquet": {
+"azure_vm_traces_2017": 3882,
+"borg_cluster_data_2011": 1118
+},
+"test/part-00002.parquet": {
+"borg_cluster_data_2011": 5000
+},
+"test/part-00003.parquet": {
+"borg_cluster_data_2011": 1451,
+"largest_2017": 397,
+"mexico_city_bikes": 30,
+"ushcn_daily": 295,
+"weatherbench_weekly": 2827
+},
+"test/part-00004.parquet": {
+"weatherbench_weekly": 5000
+},
+"test/part-00005.parquet": {
+"weatherbench_weekly": 3411
+}
+}

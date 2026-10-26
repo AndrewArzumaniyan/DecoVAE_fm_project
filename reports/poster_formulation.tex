@@ -1,0 +1,56 @@
+\documentclass{article}
+\usepackage[paperwidth=272.52mm,paperheight=70mm,margin=0mm,top=2mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{amsmath,amssymb}
+\usepackage{sfmath}
+\usepackage{xcolor}
+\definecolor{ink}{HTML}{172B3B}
+\definecolor{teal}{HTML}{006E73}
+\definecolor{muted}{HTML}{435563}
+\definecolor{paper}{HTML}{FCFCF8}
+\pagecolor{paper}
+\color{ink}
+\pagestyle{empty}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+\setlength{\abovedisplayskip}{4pt}
+\setlength{\belowdisplayskip}{4pt}
+\begin{document}
+\fontsize{12}{17}\selectfont
+\noindent
+\begin{minipage}[t]{0.48\textwidth}
+\raggedright
+{\fontsize{13.5}{18}\selectfont\color{teal}\bfseries Forecasting task\par}
+\vspace{6pt}
+{\fontsize{14}{20}\selectfont
+$\mathbf{x}=(x_{t-T+1},\ldots,x_t)\in\mathbb{R}^{T}$\par
+$\mathbf{y}=(x_{t+1},\ldots,x_{t+H})\in\mathbb{R}^{H}$\par}
+\vspace{3pt}
+{\color{muted}$T$: context length; $H$: forecast horizon.\par}
+\vspace{7pt}
+{\fontsize{15}{21}\selectfont
+$\displaystyle \mathbf{x}\longmapsto p_\theta(\mathbf{y}\mid\mathbf{x})$\par}
+\vspace{7pt}
+{\color{muted}Quantiles and intervals describe forecast uncertainty.\par}
+\vspace{8pt}
+{\color{muted}\textbf{Example:} 96 past hours, a 24-hour forecast.\par}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\raggedright
+{\fontsize{13.5}{18}\selectfont\color{teal}\bfseries How DecoVAE-FM represents uncertainty\par}
+\vspace{6pt}
+Trend and seasonal outputs form the mean. Residual features also inform the variance.\par
+\vspace{7pt}
+{\fontsize{15}{21}\selectfont
+$\displaystyle \mu=\tau+s,\qquad \log\sigma^2=g_\theta(\mathbf{z})$\par}
+\vspace{7pt}
+{\color{muted}
+$\tau,s$: trend / seasonal forecasts.\par
+\vspace{5pt}
+$\mathbf{z}$ collects learned feature vectors of the trend, seasonal and residual components, obtained through their encoders.\par}
+\vspace{8pt}
+{\color{muted}Mean and variance are in normalized model space.\par}
+\end{minipage}
+\end{document}
